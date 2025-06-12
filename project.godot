@@ -14,6 +14,10 @@ config/name="StainedGlassGame"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+STAT="*res://src/global/stat_global.gd"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
