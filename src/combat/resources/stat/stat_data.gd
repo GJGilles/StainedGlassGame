@@ -13,32 +13,33 @@ var _mods: Array[StatModData] = []
 	get:
 		return base
 	set(v):
-		for stat in stat_scaling.keys():
-			v += roundi(stat.value * stat_scaling[stat])
-		v = clampi(v, min, max)
 		var diff: int = v - base
 		base = v
 		value += diff
+
+var base_total: int:
+	get:
+		var val: int = base
+		val += stat_scaling.keys().reduce(func(acc, stat): stat.value * stat_scaling[stat])
+		val += _mods.reduce(func(acc, num): return acc + num, 0)
+		return clampi(val, min, max)
 
 var value: int = 0:
 	get:
 		return value
 	set(v):
-		value = clampi(v, min, base + get_total_mod())
+		value = clampi(v, min, base_total)
 		on_update.emit()
 
 signal on_update()
 
 func _init():
-	value = base
+	value = base_total
 	for stat: StatData in stat_scaling.keys():
 		stat.on_update.connect(_reset_base)
 
 func _reset_base():
 	base = base
-
-func get_total_mod() -> int:
-	return _mods.reduce(func(acc, num): return acc + num, 0)
 
 func add_mod(mod: StatModData):
 	_mods.append(mod)
